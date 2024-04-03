@@ -1,24 +1,24 @@
-import { CardRestaurant } from "../components/filterPageComponents/CardRestaurant"
-import React from "react"
-import { SlideBar } from "../components/filterPageComponents/SlideBar"
-import { useRestaurant } from "../hooks/hooks.jsx"
-import { useEffect } from "react"
-import { Breadcrumbs } from "../components/BreadCrumb.jsx"
-import { useUser } from "../feature/user/contexts/UserContext.jsx"
-import { Loading } from "../components/Loading"
+import { CardRestaurant } from "../components/filterPageComponents/CardRestaurant";
+import React from "react";
+import { SlideBar } from "../components/filterPageComponents/SlideBar";
+import { useRestaurant } from "../hooks/hooks.jsx";
+import { useEffect } from "react";
+import { Breadcrumbs } from "../components/BreadCrumb.jsx";
+import { useUser } from "../feature/user/contexts/UserContext.jsx";
+import { Loading } from "../components/Loading";
 
-import SlidePhoto from "../components/filterPageComponents/SlidePhoto.jsx"
-import { MiniMapGoogle } from "../feature/MimiMapGoogle.jsx"
-import { useState } from "react"
-import { LocationIcon } from "../icons/icon.jsx"
-import { useLocation } from "react-router-dom"
+import SlidePhoto from "../components/filterPageComponents/SlidePhoto.jsx";
+import { MiniMapGoogle } from "../feature/MimiMapGoogle.jsx";
+import { useState } from "react";
+import { LocationIcon } from "../icons/icon.jsx";
+import { useLocation } from "react-router-dom";
 
 const breadcrumbs = [
   { label: "หน้าหลัก", link: "/" },
   {
     label: "ค้นหาร้านอาหาร",
   },
-]
+];
 export const FilterPage = () => {
   const {
     filterPageData,
@@ -28,18 +28,18 @@ export const FilterPage = () => {
     fetchFilterData,
     filterInput,
     fetchSidebar,
-  } = useRestaurant()
+  } = useRestaurant();
 
-  const { restaurants } = filterPageData
-  const { user } = useUser()
-  const [isOpenMap, setIsOpenMap] = useState()
+  const { restaurants } = filterPageData;
+  const { user } = useUser();
+  const [isOpenMap, setIsOpenMap] = useState();
 
   //if user is login ? fetchRestaurantWithUserLogin : fetchFilterPage
 
   useEffect(() => {
-    fetchSidebar()
-  }, [])
-
+    fetchSidebar();
+  }, []);
+  console.log(restaurants);
   return (
     //layout
     isLoading ? (
@@ -154,5 +154,5 @@ export const FilterPage = () => {
         </div>
       </div>
     )
-  )
-}
+  );
+};

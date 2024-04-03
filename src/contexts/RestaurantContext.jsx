@@ -1,100 +1,103 @@
-import io from "socket.io-client"
+import io from "socket.io-client";
 
-const socket = io.connect("http://localhost:8888/")
+const socket = io.connect("http://localhost:8888/");
 
-import { useState, createContext } from "react"
+import { useState, createContext } from "react";
 import {
   filterPageGetRestaurant,
   getFilterRestaurant,
   getAllUserBookmark,
   getRestaurantById,
-} from "../apis/restaurants"
-import { useUser } from "../feature/user/contexts/UserContext"
-import { getUserBookmark } from "../apis/user"
+} from "../apis/restaurants";
+import { useUser } from "../feature/user/contexts/UserContext";
+import { getUserBookmark } from "../apis/user";
 
-import { useEffect } from "react"
+import { useEffect } from "react";
 
-export const RestaurantContext = createContext()
+export const RestaurantContext = createContext();
 
 export const RestaurantContextProvider = ({ children }) => {
-  const [r, serR] = useState("")
-  const [filterPageData, setFilterPageData] = useState({})
-  const [filterInput, setFilterInput] = useState({ rating: [] })
-  const [isLoading, setLoading] = useState(false)
-  const [currentPosition, setCurrentPosition] = useState(null)
-  const [sideBarData, setSideBarData] = useState({})
+  const [r, serR] = useState("");
+  const [filterPageData, setFilterPageData] = useState({});
+  const [filterInput, setFilterInput] = useState({ rating: [] });
+  const [isLoading, setLoading] = useState(false);
+  const [currentPosition, setCurrentPosition] = useState(null);
+  const [sideBarData, setSideBarData] = useState({});
 
-  const [restaurantData, setRestaurantPage] = useState({})
-  const [reviewsRating, setReviewsRating] = useState(null)
+  const [restaurantData, setRestaurantPage] = useState({});
+  const [reviewsRating, setReviewsRating] = useState(null);
 
-  const { user } = useUser()
-  const [restaurant, setRestaurant] = useState("")
-  const [searchBar1, setSearchBar] = useState([])
+  const { user } = useUser();
+  const [restaurant, setRestaurant] = useState("");
+  const [searchBar1, setSearchBar] = useState([]);
 
-  const [nameRestaurant, setNameRestaurant] = useState([])
+  const [nameRestaurant, setNameRestaurant] = useState([]);
   const fetch = async () => {
-    const data = await filterPageGetRestaurant()
-    setNameRestaurant(data.data.restaurants)
-    const response = await filterPageGetRestaurant()
-    setSearchBar(response.data)
-  }
+    const data = await filterPageGetRestaurant();
+    setNameRestaurant(data.data.restaurants);
+    const response = await filterPageGetRestaurant();
+    setSearchBar(response.data);
+    // setFilterPageData(data.data.restaurants);
+    // console.log(data.data.restaurants)
+  };
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition((position) => {
-        const { latitude, longitude } = position.coords
-        setCurrentPosition({ latitude, longitude })
-      })
+        const { latitude, longitude } = position.coords;
+        setCurrentPosition({ latitude, longitude });
+      });
     }
-  }, [])
+  }, []);
   useEffect(() => {
-    fetch()
-  }, [])
+    fetch();
+  }, []);
+  console.log(filterPageData);
 
   useEffect(() => {
-    socket.auth = { sender: "RESTAURANT" + r }
+    socket.auth = { sender: "RESTAURANT" + r };
     // console.log("first");
-    socket.connect()
-    return () => socket.disconnect()
-  }, [r])
+    socket.connect();
+    return () => socket.disconnect();
+  }, [r]);
 
   const fetchSidebar = async () => {
     try {
-      const response = await filterPageGetRestaurant()
-      console.log(response.data)
+      const response = await filterPageGetRestaurant();
+      console.log(response.data);
       setSideBarData({
         districts: response.data.districts,
         facilities: response.data.facilities,
         categories: response.data.categories,
-      })
+      });
     } catch (err) {
-      console.log(err)
+      console.log(err);
     }
-  }
+  };
 
   const fetchFilterPage = async () => {
     try {
       // setLoading(true)
-      const response = await filterPageGetRestaurant()
-      setFilterPageData(response.data)
+      const response = await filterPageGetRestaurant();
+      setFilterPageData(response.data);
     } catch (err) {
-      console.log(err)
+      console.log(err);
     } finally {
       // setLoading(false);
     }
-  }
+  };
 
   const fetchFilterData = async (filterData) => {
     try {
       if (Object.keys(filterData).length === 0) {
-        console.log("no filter")
-        return
+        console.log("no filter");
+        return;
       } else if (Object.values(filterData).every((arr) => arr.length === 0)) {
         // setLoading(true)
         if (!user) {
-          console.log("no user")
-          fetchFilterPage()
+          console.log("no user");
+          fetchFilterPage();
         } else {
-          console.log("have user")
+          console.log("have user");
         }
       }
 
@@ -105,88 +108,88 @@ export const RestaurantContextProvider = ({ children }) => {
         rating: filterData?.rating,
         priceLength: filterData?.priceLength,
         categoryId: filterData?.categoryName,
-      }
+      };
 
-      const response = await getFilterRestaurant(filterDataParams)
+      const response = await getFilterRestaurant(filterDataParams);
 
       if (response.data?.restaurants?.length > 0) {
         setFilterPageData((prev) => ({
           ...prev,
           restaurants: response.data?.restaurants,
-        }))
+        }));
       } else {
         setFilterPageData((prev) => ({
           ...prev,
           restaurants: [],
-        }))
+        }));
       }
     } catch (err) {
-      console.log(err)
+      console.log(err);
     } finally {
       // setLoading(false)
     }
-  }
+  };
 
   const clearFilters = () => {
     try {
-      setFilterInput({})
+      setFilterInput({});
       if (!user) {
-        fetchFilterPage()
+        fetchFilterPage();
       } else {
-        fetchRestaurantWithUserLogin()
+        fetchRestaurantWithUserLogin();
       }
     } catch (err) {
-      console.log(err)
+      console.log(err);
     }
-  }
+  };
 
   const fetchRestaurantWithUserLogin = async () => {
     //if user is login
     try {
-      const response = await getAllUserBookmark()
+      const response = await getAllUserBookmark();
       //  console.log("this bookmark", response.data)
-      setFilterPageData(response.data)
+      setFilterPageData(response.data);
     } catch (err) {
-      console.log(err)
+      console.log(err);
     }
-  }
+  };
 
   const fetchRestaurantAndBookmarkById = async (restaurantId) => {
     try {
-      setLoading(true)
+      setLoading(true);
       if (user) {
         const [restaurantResponse, bookmarkResponse] = await Promise.all([
           getRestaurantById(restaurantId),
           getUserBookmark(restaurantId),
-        ])
+        ]);
 
         setRestaurantPage({
           restaurant: restaurantResponse.data?.restaurant,
           bookmarks: bookmarkResponse.data?.bookmarks,
-        })
-        return
+        });
+        return;
       }
 
-      const response = await getRestaurantById(restaurantId)
+      const response = await getRestaurantById(restaurantId);
       setRestaurantPage({
         restaurant: response.data?.restaurant,
         bookmarks: [],
-      })
+      });
     } catch (err) {
-      console.log(err)
+      console.log(err);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const filterByRating = (rating) => {
     if (!rating && restaurantData?.restaurant?.reviews)
-      return setReviewsRating(restaurantData?.restaurant?.reviews)
+      return setReviewsRating(restaurantData?.restaurant?.reviews);
     const reviews = restaurantData?.restaurant?.reviews?.filter(
       (el) => el.star == rating
-    )
-    setReviewsRating(reviews)
-  }
+    );
+    setReviewsRating(reviews);
+  };
   ////////
 
   return (
@@ -220,5 +223,5 @@ export const RestaurantContextProvider = ({ children }) => {
     >
       {children}
     </RestaurantContext.Provider>
-  )
-}
+  );
+};

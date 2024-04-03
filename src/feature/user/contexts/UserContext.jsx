@@ -58,7 +58,7 @@ export default function UserContextProvider({ children }) {
     // setOnFetch((c) => !c); // ฮั่นเอาออก
     toast.success("Delete bookmark successful");
   };
-  console.log(user);
+  // console.log(user);
   return (
     <UserContext.Provider
       value={{

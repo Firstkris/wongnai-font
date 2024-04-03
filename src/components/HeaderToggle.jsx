@@ -57,6 +57,7 @@ export default function HeaderToggle() {
     }
   }, [isUserToggle]);
 
+  console.log(user?.imgProfile);
   return (
     <div className="flex gap-2 relative z-40" ref={dropdown}>
       {user ? (
@@ -71,6 +72,7 @@ export default function HeaderToggle() {
                 src={user?.imgProfile}
                 className="w-[25px] h-[25px] rounded-full object-cover"
               />
+
               <div className="font-bold">{firstName}</div>
             </div>
           </Link>
